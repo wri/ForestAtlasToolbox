@@ -53,10 +53,13 @@ def update_field_alias(in_gdb, alias_table, lang, messages):
         if alias != '' and alias is not None:
             messages.addMessage("Update %s, %s" % (dataset, field))
             messages.addMessage(alias)
-            field_list = arcpy.ListFields (ds_path)
+            field_list = arcpy.ListFields(ds_path)
             for f in field_list:
-                if f.name == field:
-                    f.aliasName = alias
+                if f.name == field and f.name.lower() not in \
+                        ["shape", "globalid", "shape_area", "shape_length", "shape.starea()", "shape.stlength()"]:
+
+                    arcpy.AlterField_management(ds_path, field, new_field_alias=alias)
+                    #f.aliasName = alias
 
 
 def update_subtype(in_gdb, subtype_table, lang, messages):
