@@ -15,6 +15,7 @@ def copy_metadata(fc, output):
     installDir = arcpy.GetInstallInfo("desktop")["InstallDir"]
     xslt = os.path.join(installDir, r"Metadata\Stylesheets\gpTools\exact copy of.xslt")
     arcpy.XSLTransform_conversion(fc, xslt, output)
+    
 
 
 def export_metadata(fc, output_file, translator="ISO"):
@@ -43,7 +44,7 @@ def import_metadata(fc, metadata, format="ARCGIS"):
 
 def get_metadata_file(fc):
     data_type = get_datatype(fc)
-    if data_type == "FeatureClass":
+    if data_type == "FeatureClass" or data_type == "Table":
         sets = settings.get_settings()
         if os.path.exists(sets['paths']['scratch_workspace']):
             temp_folder = sets['paths']['scratch_workspace']

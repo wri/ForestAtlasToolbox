@@ -2,6 +2,7 @@ import settings
 import metadata
 import codecs
 import os
+import arcpy
 
 
 def read_meta_dic(f):
@@ -34,8 +35,7 @@ def get_position_in_list(i_list, item):
 def update_md_layer(mfile, layer, mkeys, messages):
 #m_file, m_dic[layer], m_keys
 
-    #messages.addMessage("Layer %s" % layer)
-
+    
     for attrib in layer:
 
         messages.addMessage("Attribute %s" % attrib)
@@ -96,6 +96,11 @@ def import_metadata(gdb, m_dic, messages):
 
     for layer in m_dic:
         fc = os.path.join(gdb, layer)
-        m_file = metadata.get_metadata_file(fc)
-        update_md_layer(m_file, m_dic[layer], m_keys, messages)
-        metadata.import_metadata(fc, m_file)
+        if arcpy.Exists(fc):
+            m_file = metadata.get_metadata_file(fc)
+            messages.addMessage("Layer %s" % layer)
+            messages.addMessage("File %s" % m_file)
+            update_md_layer(m_file, m_dic[layer], m_keys, messages)
+            metadata.import_metadata(fc, m_file)
+        else:
+            messages.AddMessage("Layer %s does not exists" % layer)
