@@ -32,10 +32,13 @@ def update_dataset_alias(in_gdb, alias_table, lang, messages):
         dataset = row.getValue(dataset_field)
         messages.addMessage("Update dataset %s" % dataset)
         ds_path = os.path.join(in_gdb, dataset)
-        alias = row.getValue(alias_field)
+        if arcpy.Exists(ds_path):
+            alias = row.getValue(alias_field)
 
-        if alias != '' and alias is not None:
-            arcpy.AlterAliasName(ds_path, alias)
+            if alias != '' and alias is not None:
+                arcpy.AlterAliasName(ds_path, alias)
+        else:
+            messages.addMessage("Dataset %s does not exist" % dataset)
 
 
 def update_field_alias(in_gdb, alias_table, lang, messages):
@@ -47,20 +50,23 @@ def update_field_alias(in_gdb, alias_table, lang, messages):
     for row in cursor:
         dataset = row.getValue(dataset_field)
         ds_path = os.path.join(in_gdb, dataset)
+
         field = row.getValue(field_field)
         alias = row.getValue(alias_field)
 
         if alias != '' and alias is not None:
             messages.addMessage("Update %s, %s" % (dataset, field))
             messages.addMessage(alias)
-            field_list = arcpy.ListFields(ds_path)
-            for f in field_list:
-                if f.name == field and f.name.lower() not in \
-                        ["shape", "globalid", "shape_area", "shape_length", "shape.starea()", "shape.stlength()"]:
+            if arcpy.Exists(ds_path):
+                field_list = arcpy.ListFields(ds_path)
+                for f in field_list:
+                    if f.name == field and f.name.lower() not in \
+                            ["shape", "globalid", "shape_area", "shape_length", "shape.starea()", "shape.stlength()"]:
 
-                    arcpy.AlterField_management(ds_path, field, new_field_alias=alias)
-                    #f.aliasName = alias
-
+                        arcpy.AlterField_management(ds_path, field, new_field_alias=alias)
+                        #f.aliasName = alias
+            else:
+                messages.addMessage("Dataset %s does not exist" % dataset)
 
 def update_subtype(in_gdb, subtype_table, lang, messages):
     cursor = arcpy.SearchCursor(subtype_table)
@@ -76,13 +82,18 @@ def update_subtype(in_gdb, subtype_table, lang, messages):
         desc = row.getValue(desc_field)
         #default = row.getValue(default_field)
         messages.addMessage("Update suptype %s" % subtype)
-
-        if desc != '' and desc is not None:
-            arcpy.RemoveSubtype_management(ds_path, subtype)
-            arcpy.AddSubtype_management(ds_path, subtype, desc)
-            #if default:
-            #    arcpy.SetDefaultSubtype_management(ds_path, subtype)
-
+        if arcpy.Exists(ds_path):
+            if desc != '' and desc is not None:
+                arcpy.RemoveSubtype_management(ds_path, subtype)
+                try:
+                    arcpy.SetSubtypeField_management(ds_path, "type_")
+                except:
+                    pass
+                arcpy.AddSubtype_management(ds_path, subtype, desc)
+                #if default:
+                #    arcpy.SetDefaultSubtype_management(ds_path, subtype)
+        else:
+            messages.addMessage("Dataset %s does not exist" % dataset)
 
 def subtypes_to_table(in_gdb, out_gdb, out_table, messages):
 
