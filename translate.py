@@ -84,17 +84,19 @@ def update_subtype(in_gdb, subtype_table, lang, messages):
         messages.addMessage("Update suptype %s" % subtype)
         if arcpy.Exists(ds_path):
             if desc != '' and desc is not None:
+                #arcpy.SetSubtypeField_management(ds_path, "type_")
                 try:
                     arcpy.RemoveSubtype_management(ds_path, subtype)
                 except:
-                    messages.addMessage("Suptype %s does not yet exist" % subtype)
-                try:
-                    arcpy.SetSubtypeField_management(ds_path, "type_")
-                except:
                     pass
-                arcpy.AddSubtype_management(ds_path, subtype, desc)
-                #if default:
-                #    arcpy.SetDefaultSubtype_management(ds_path, subtype)
+                try:
+                    arcpy.AddSubtype_management(ds_path, subtype, desc)
+                    #messages.addMessage("Update Suptype %s" % subtype)
+                except:
+                    arcpy.SetSubtypeField_management (ds_path, "type_")
+                    arcpy.AddSubtype_management(ds_path, subtype, desc)
+                    #messages.addMessage("Update Suptype %s" % subtype)
+                #arcpy.SetDefaultSubtype_management(ds_path, "subtype")
         else:
             messages.addMessage("Dataset %s does not exist" % dataset)
 
