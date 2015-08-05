@@ -7,6 +7,7 @@ import cgi
 
 
 def get_datatype(fc):
+    # get datatype
     desc = arcpy.Describe(fc)
     return desc.dataType
 
