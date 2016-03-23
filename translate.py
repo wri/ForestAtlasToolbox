@@ -68,6 +68,7 @@ def update_field_alias(in_gdb, alias_table, lang, messages):
             else:
                 messages.addMessage("Dataset %s does not exist" % dataset)
 
+
 def update_subtype(in_gdb, subtype_table, lang, messages):
     cursor = arcpy.SearchCursor(subtype_table)
     dataset_field = "feature_class"
@@ -91,10 +92,12 @@ def update_subtype(in_gdb, subtype_table, lang, messages):
                     pass
                 try:
                     arcpy.AddSubtype_management(ds_path, subtype, desc)
+                    arcpy.AssignDefaultToField_management(ds_path, "desc_type", desc, subtype)
                     #messages.addMessage("Update Suptype %s" % subtype)
                 except:
                     arcpy.SetSubtypeField_management (ds_path, "type_")
                     arcpy.AddSubtype_management(ds_path, subtype, desc)
+                    arcpy.AssignDefaultToField_management(ds_path, "desc_type", desc, subtype)
                     #messages.addMessage("Update Suptype %s" % subtype)
                 #arcpy.SetDefaultSubtype_management(ds_path, "subtype")
         else:
@@ -126,7 +129,9 @@ def subtypes_to_table(in_gdb, out_gdb, out_table, messages):
         for st in subtypes:
             messages.addMessage("Adding subtypes for %s" % table)
             row = cursor.newRow()
-            row.setValue("feature_class", table)
+            t = table.split(".")[-1:][0]
+
+            row.setValue("feature_class", t)
             row.setValue("subtype", st)
             row.setValue("desc_fr", subtypes[st]["Name"])
             cursor.insertRow(row)
@@ -135,15 +140,17 @@ def subtypes_to_table(in_gdb, out_gdb, out_table, messages):
         ds_path = os.path.join(in_gdb, dataset)
         arcpy.env.workspace = ds_path
         feature_classes = arcpy.ListFeatureClasses()
-        for fc in feature_classes:
-            messages.addMessage("Adding fields for %s" % fc)
-            fc_path = os.path.join(ds_path, fc)
+        ds = dataset.split(".")[-1:][0]
+        for feature_class in feature_classes:
+            messages.addMessage("Adding fields for %s" % feature_class)
+            fc_path = os.path.join(ds_path, feature_class)
+            fc = feature_class.split(".")[-1:][0]
 
             subtypes = arcpy.da.ListSubtypes(fc_path)
 
             for st in subtypes:
                 row = cursor.newRow()
-                row.setValue("feature_class", r"%s\%s" % (dataset, fc))
+                row.setValue("feature_class", r"%s\%s" % (ds, fc))
                 row.setValue("subtype", st)
                 row.setValue("desc_fr", subtypes[st]["Name"])
                 cursor.insertRow(row)
@@ -171,9 +178,10 @@ def field_list_to_table(in_gdb, out_gdb, out_table, messages):
         messages.addMessage("Adding fields for %s" % table)
         table_path = os.path.join(in_gdb, table)
         field_list = arcpy.ListFields(table_path)
+        t = table.split(".")[-1:][0]
         for f in field_list:
             row = cursor.newRow()
-            row.setValue("feature_class", table)
+            row.setValue("feature_class", t)
             row.setValue("field", f.name)
             row.setValue("alias_fr", f.aliasName)
             cursor.insertRow(row)
@@ -182,13 +190,15 @@ def field_list_to_table(in_gdb, out_gdb, out_table, messages):
         ds_path = os.path.join(in_gdb, dataset)
         arcpy.env.workspace = ds_path
         feature_classes = arcpy.ListFeatureClasses()
-        for fc in feature_classes:
-            messages.addMessage("Adding fields for %s" % fc)
-            fc_path = os.path.join(ds_path, fc)
+        ds = dataset.split(".")[-1:][0]
+        for feature_class in feature_classes:
+            messages.addMessage("Adding fields for %s" % feature_class)
+            fc_path = os.path.join(ds_path, feature_class)
             field_list = arcpy.ListFields(fc_path)
+            fc = feature_class.split(".")[-1:][0]
             for f in field_list:
                 row = cursor.newRow()
-                row.setValue("feature_class", r"%s\%s" % (dataset, fc))
+                row.setValue("feature_class", r"%s\%s" % (ds, fc))
                 row.setValue("field", f.name)
                 row.setValue("alias_fr", f.aliasName)
                 cursor.insertRow(row)
@@ -214,23 +224,25 @@ def datasets_to_table(in_gdb, out_gdb, out_table, messages):
     for table in tables:
         messages.addMessage("Adding alias for %s" % table)
         table_path = os.path.join(in_gdb, table)
-
+        t = table.split(".")[-1:][0]
         alias = get_table_alias(table_path)
 
         row = cursor.newRow()
-        row.setValue("feature_class", table)
+        row.setValue("feature_class", t)
         row.setValue("alias_fr", alias)
         cursor.insertRow(row)
 
     for dataset in datasets:
         ds_path = os.path.join(in_gdb, dataset)
         arcpy.env.workspace = ds_path
+        ds = dataset.split(".")[-1:][0]
         feature_classes = arcpy.ListFeatureClasses()
-        for fc in feature_classes:
-            messages.addMessage("Adding alias for %s" % fc)
-            fc_path = os.path.join(ds_path, fc)
+        for feature_class in feature_classes:
+            fc = feature_class.split(".")[-1:][0]
+            messages.addMessage("Adding alias for %s" % feature_class)
+            fc_path = os.path.join(ds_path, feature_class)
             alias = get_table_alias(fc_path)
             row = cursor.newRow()
-            row.setValue("feature_class", r"%s\%s" % (dataset, fc))
+            row.setValue("feature_class", r"%s\%s" % (ds, fc))
             row.setValue("alias_fr", alias)
             cursor.insertRow(row)

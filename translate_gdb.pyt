@@ -1,12 +1,7 @@
 import arcpy
-import os
 import import_metadata
 import translate
-#import sys
-
-
-
-
+import attachements_metadata
 
 
 class Toolbox(object):
@@ -24,7 +19,8 @@ class Toolbox(object):
                       WriteDataSetsToTable,
                       WriteFieldsToTable,
                       WriteSubtypesToTable,
-                      ImportMetadata]
+                      ImportMetadata,
+                      AddAttachementMetadata]
 
 
 class UpdateDomain(object):
@@ -525,4 +521,47 @@ class ImportMetadata(object):
         m_dic = parameters[1].valueAsText
 
         import_metadata.import_metadata(in_gdb, m_dic, messages)
+        return
+
+class AddAttachementMetadata(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "Add document metadata fields"
+        self.description = "Add document metadata fields"
+        self.canRunInBackground = False
+
+    def getParameterInfo(self):
+        """Define parameter definitions"""
+        # First parameter
+        param0 = arcpy.Parameter(
+            displayName="Input GDB",
+            name="in_gdbs",
+            datatype="DEWorkspace",
+            parameterType="Required",
+            direction="Input")
+
+        params = [param0]
+
+        return params
+
+    def isLicensed(self):
+        """Set whether tool is licensed to execute."""
+        return True
+
+    def updateParameters(self, parameters):
+        """Modify the values and properties of parameters before internal
+        validation is performed.  This method is called whenever a parameter
+        has been changed."""
+        return
+
+    def updateMessages(self, parameters):
+        """Modify the messages created by internal validation for each tool
+        parameter.  This method is called after internal validation."""
+        return
+
+    def execute(self, parameters, messages):
+        """The source code of the tool."""
+        in_gdb = parameters[0].valueAsText
+
+        attachements_metadata.add_metadata_fields(in_gdb, messages)
         return
