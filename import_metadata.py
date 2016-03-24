@@ -1,106 +1,200 @@
-import settings
-import metadata
-import codecs
+import arcpy_metadata
 import os
-import arcpy
+import gspread
+import json
+from oauth2client.client import SignedJwtAssertionCredentials
+
+lkpColName_to_mdName = {
+                        #'Technical title': u'technical_title',
+                        'title': 'title',
+                        'summery': 'summery',
+                        'description': 'description',
+                        'language': 'language',
+                        'tags': 'tags',
+                        'place_keywords': 'place_keywords',
+                        'extent_description': 'extent_description',
+                        'temporal_extent_description': 'temporal_extent_description',
+                        'scale_description': 'scale_description',
+                        'scale_min': 'scale_min',
+                        'scale_max': 'scale_max',
+                        'update_freq_desc': 'update_freq_desc',
+                        'credits': 'credits',
+                        'citation': 'citation',
+                        'license': 'license',
+                        'limitation': 'limitation',
+                        'source': 'source',
+                        'contact_wri_name': 'contact_wri_name',
+                        'contact_wri_org': 'contact_wri_org',
+                        'contact_wri_pos': 'contact_wri_pos',
+                        'contact_wri_role': 'contact_wri_role',
+                        'contact_wri_address': 'contact_wri_address',
+                        'contact_wri_city': 'contact_wri_city',
+                        'contact_wri_state': 'contact_wri_state',
+                        'contact_wri_postalcode': 'contact_wri_postalcode',
+                        'contact_wri_email': 'contact_wri_email',
+                        'contact_wri_country': 'contact_wri_country',
+                        'contact_wri_phone': 'contact_wri_phone',
+                        'contact_tec_name': 'contact_tec_name',
+                        'contact_tec_org': 'contact_tec_org',
+                        'contact_tec_pos': 'contact_tec_pos',
+                        'contact_tec_role': 'contact_tec_role',
+                        'contact_tec_address': 'contact_tec_address',
+                        'contact_tec_city': 'contact_tec_city',
+                        'contact_tec_state': 'contact_tec_state',
+                        'contact_tec_postalcode': 'contact_tec_postalcode',
+                        'contact_tec_email': 'contact_tec_email',
+                        'contact_tec_country': 'contact_tec_country',
+                        'contact_tec_phone': 'contact_tec_phone',
+                        'contact_own_name': 'contact_own_name',
+                        'contact_own_org': 'contact_own_org',
+                        'contact_own_pos': 'contact_own_pos',
+                        'contact_own_role': 'contact_own_role',
+                        'contact_own_address': 'contact_own_address',
+                        'contact_own_city': 'contact_own_city',
+                        'contact_own_state': 'contact_own_state',
+                        'contact_own_postalcode': 'contact_own_postalcode',
+                        'contact_own_email': 'contact_own_email',
+                        'contact_own_country': 'contact_own_country',
+                        'contact_own_phone': 'contact_own_phone'
+                        }
+
+def open_spreadsheet(country, lang):
+
+    #specify oauth2client credentials
+    abspath = os.path.abspath(__file__)
+    dir_name = os.path.dirname(abspath)
+    spreadsheet_file = os.path.join(dir_name, 'spreadsheet.json')
+
+    json_key = json.load(open(spreadsheet_file))
+    scope = ['https://spreadsheets.google.com/feeds']
+    credentials = SignedJwtAssertionCredentials(json_key['client_email'], json_key['private_key'].encode(), scope)
+
+    #authorize oauth2client credentials
+    gc = gspread.authorize(credentials)
+
+    #open the metadata entry spreadsheet
+    #wks = gc.open("Metadata Forest Atlas (french/ spanish)").sheet1
+    if lang == "en":
+        if country == "COG":
+            wks = gc.open_by_key("1f0ODEaQL2RUV8bv3Y3_Kqwf9eLFL1mZiwLxFWS1SRfY").sheet1
+        elif country == "COD":
+            wks = gc.open_by_key("1f0ODEaQL2RUV8bv3Y3_Kqwf9eLFL1mZiwLxFWS1SRfY").sheet2
+        elif country == "CAF":
+            wks = gc.open_by_key("1f0ODEaQL2RUV8bv3Y3_Kqwf9eLFL1mZiwLxFWS1SRfY").sheet3
+        elif country == "CMR":
+            wks = gc.open_by_key("1f0ODEaQL2RUV8bv3Y3_Kqwf9eLFL1mZiwLxFWS1SRfY").sheet4
+        elif country == "GAB":
+            wks = gc.open_by_key("1f0ODEaQL2RUV8bv3Y3_Kqwf9eLFL1mZiwLxFWS1SRfY").sheet5
+        elif country == "GNQ":
+            wks = gc.open_by_key("1f0ODEaQL2RUV8bv3Y3_Kqwf9eLFL1mZiwLxFWS1SRfY").sheet6
+    else:
+        if country == "COG":
+            wks = gc.open_by_key("1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM").sheet1
+        elif country == "COD":
+            wks = gc.open_by_key("1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM").sheet2
+        elif country == "CAF":
+            wks = gc.open_by_key("1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM").sheet3
+        elif country == "CMR":
+            wks = gc.open_by_key("1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM").sheet4
+        elif country == "GAB":
+            wks = gc.open_by_key("1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM").sheet5
+        elif country == "GNQ":
+            wks = gc.open_by_key("1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM").sheet6
+
+    gdocAsLists = wks.get_all_values()
+
+    return gdocAsLists
 
 
-def read_meta_dic(f):
-    meta_lines = []
-    with codecs.open(f, 'r', encoding="utf8") as csvfile:
-        #meta = csv.reader(csvfile, delimiter='\t', quotechar='"')
-        for row in csvfile:
-            meta_lines.append(row.split("\t"))
+def gdoc_lists_to_layer_dict(inGdocAsLists):
 
-    meta_attribute = meta_lines[1:len(meta_lines)-1]
+    #Create emtpy metadata dictionary
+    md = {}
 
-    layers = meta_lines[0][3:len(meta_lines[0])-1]
+    #Pull the header row from the Google doc
+    headerRow = inGdocAsLists[0]
 
-    meta = {}
-    i = 0
+    #Iterate over the remaining data rows
+    for dataRow in inGdocAsLists[1:]:
 
-    for layer in layers:
-        meta[layer] = {}
-        for att in meta_attribute:
-            meta[layer][att[0]] = {"value": att[i+3], "frequency": att[1], "subtype": att[2]}
-        i += 1
+        #Build a dictionary for each row with the column title
+        #as the key and the value of that row as the value
+        rowAsDict = {k: v for (k, v) in zip(headerRow, dataRow)}
 
-    return meta
+        #Grab the technical title (what we know the layer as)
+        layerName = rowAsDict['technical_title']
 
+        #Add that as a key to the larger md dictionary
+        md[layerName] = {}
 
-def get_position_in_list(i_list, item):
-    return [i for i, x in enumerate(i_list) if x == item]
+        #For all the
+        for key, value in rowAsDict.iteritems():
+            try:
+                mdItemName = lkpColName_to_mdName[key]
+                md[layerName][mdItemName] = value
 
-
-def update_md_layer(mfile, layer, mkeys, messages):
-#m_file, m_dic[layer], m_keys
-
-    
-    for attrib in layer:
-
-        messages.addMessage("Attribute %s" % attrib)
-
-        if layer[attrib]['frequency'] == "single":
-            attributes = {}
-            a_elmements = []
-
-            if attrib in mkeys["ARCGIS"]['values'].keys():
-                if layer[attrib]['subtype'] != "":
-                    subtype = layer[attrib]['subtype']
-                    for element in mkeys["ARCGIS"]['values'][attrib]:
-                        #l = mkeys["ARCGIS"][attrib]
-                        pos = get_position_in_list(mkeys["ARCGIS"][attrib], element)
-                        e_tree = mkeys["ARCGIS"][attrib][0:pos[0]+1]
-                        text = True
-
-                        attributes[attrib] = {}
-
-                        for s_attrib in mkeys["ARCGIS"]['values'][attrib][element][subtype]:
-
-                            value = mkeys["ARCGIS"]['values'][attrib][element][subtype][s_attrib]
-                            if s_attrib == "text":
-                                text = False
-                            else:
-                                attributes[attrib][s_attrib] = value
-                                a_elmements.append([mfile, e_tree, s_attrib, value])
-                                #metadata.update_metadata_element_attribute(mfile, e_tree, s_attrib, value)
-
-                        metadata.update_metadata_element_and_attribute(mfile,
-                                                                               mkeys["ARCGIS"][attrib],
-                                                                               layer[attrib]['value'].strip('"'),
-                                                                               attributes)
-                        #if text:
-                        #        metadata.update_metadata_element_and_attribute(mfile,
-                        #                                                       mkeys["ARCGIS"][attrib],
-                        #                                                       layer[attrib]['value'].strip('"'),
-                        #                                                       attributes)
-                        #else:
-                        #    for a_e in a_elmements:
-                        #        metadata.update_metadata_element_attribute(a_e[0], a_e[1], a_e[2], a_e[3])
-            else:
-
-                metadata.update_metadata_element(mfile, mkeys["ARCGIS"][attrib], layer[attrib]['value'].strip('"'))
-        else:
-            values = layer[attrib]['value'].split(',')
-            striped_values = []
-            for value in values:
-                striped_values.append(value.strip('"').strip())
-            metadata.update_metadata_elements(mfile, mkeys["ARCGIS"][attrib], striped_values)
+            #If the field isn't in our metadata lookup, ignore it
+            except:
+                pass
 
 
-def import_metadata(gdb, m_dic, messages):
-    #r"C:\Users\Thomas.Maschler\Desktop\WRI_metadata_gnq.txt"
-    #r"C:\Users\Thomas.Maschler\Desktop\conc.xml"
-    m_keys = settings.get_metadata_keys()
-    m_dic = read_meta_dic(m_dic)
+    return md
 
-    for layer in m_dic:
-        fc = os.path.join(gdb, layer)
-        if arcpy.Exists(fc):
-            m_file = metadata.get_metadata_file(fc)
-            messages.addMessage("Layer %s" % layer)
-            messages.addMessage("File %s" % m_file)
-            update_md_layer(m_file, m_dic[layer], m_keys, messages)
-            metadata.import_metadata(fc, m_file)
-        else:
-            messages.AddMessage("Layer %s does not exists" % layer)
+
+def update_metadata(gdb, country, lang, messages):
+
+    gdocAsLists = open_spreadsheet(country, lang)
+    md = gdoc_lists_to_layer_dict(gdocAsLists)
+    for dataset in md.keys():
+        messages.addMessage("Update metadata for %s" % dataset)
+        ds = os.path.join(gdb, dataset)
+        metadata = arcpy_metadata.MetadataEditor(ds)
+
+        metadata.title = md[dataset]["title"]
+        metadata.purpose = md[dataset]["summery"]
+        metadata.abstract = md[dataset]["description"]
+        metadata.language = md[dataset]["language"]
+        metadata.tags = md[dataset]["tags"].split(",")
+        metadata.place_keywords = md[dataset]["place_keywords"].split(",")
+        metadata.extent_description = md[dataset]["extent_description"]
+        metadata.temporal_extent_description = md[dataset]["temporal_extent_description"]
+        metadata.scale_resolution = md[dataset]["scale_description"]
+        metadata.min_scale = md[dataset]["scale_min"]
+        metadata.max_scale = md[dataset]["scale_max"]
+        metadata.update_frequency = md[dataset]["update_freq_desc"]
+        metadata.credits = md[dataset]["credits"]
+        metadata.citation = md[dataset]["citation"]
+        metadata.license = md[dataset]["license"]
+        metadata.limitation = md[dataset]["limitation"]
+        metadata.source = md[dataset]["source"]
+        metadata.point_of_contact.contact_name = md[dataset]["contact_wri_name"]
+        metadata.point_of_contact.organization = md[dataset]["contact_wri_org"]
+        metadata.point_of_contact.position = md[dataset]["contact_wri_pos"]
+        metadata.point_of_contact.address = md[dataset]["contact_wri_address"]
+        metadata.point_of_contact.city = md[dataset]["contact_wri_city"]
+        metadata.point_of_contact.state = md[dataset]["contact_wri_state"]
+        metadata.point_of_contact.zip = md[dataset]["contact_wri_postalcode"]
+        metadata.point_of_contact.email = md[dataset]["contact_wri_email"]
+        metadata.point_of_contact.country = md[dataset]["contact_wri_country"]
+        metadata.point_of_contact.phone_nb = md[dataset]["contact_wri_phone"]
+        metadata.maintenance_contact.contact_name = md[dataset]["contact_tec_name"]
+        metadata.maintenance_contact.organization = md[dataset]["contact_tec_org"]
+        metadata.maintenance_contact.position = md[dataset]["contact_tec_pos"]
+        metadata.maintenance_contact.address = md[dataset]["contact_tec_address"]
+        metadata.maintenance_contact.city = md[dataset]["contact_tec_city"]
+        metadata.maintenance_contact.state = md[dataset]["contact_tec_state"]
+        metadata.maintenance_contact.zip = md[dataset]["contact_tec_postalcode"]
+        metadata.maintenance_contact.email = md[dataset]["contact_tec_email"]
+        metadata.maintenance_contact.country = md[dataset]["contact_tec_country"]
+        metadata.maintenance_contact.phone_nb = md[dataset]["contact_tec_phone"]
+        metadata.citation_contact.contact_name = md[dataset]["contact_own_name"]
+        metadata.citation_contact.organization = md[dataset]["contact_own_org"]
+        metadata.citation_contact.position = md[dataset]["contact_own_pos"]
+        metadata.citation_contact.address = md[dataset]["contact_own_address"]
+        metadata.citation_contact.city = md[dataset]["contact_own_city"]
+        metadata.citation_contact.state = md[dataset]["contact_own_state"]
+        metadata.citation_contact.zip = md[dataset]["contact_own_postalcode"]
+        metadata.citation_contact.email = md[dataset]["contact_own_email"]
+        metadata.citation_contact.country = md[dataset]["contact_own_country"]
+        metadata.citation_contact.phone_nb = md[dataset]["contact_own_phone"]
+        metadata.finish()

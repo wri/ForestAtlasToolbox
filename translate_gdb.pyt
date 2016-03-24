@@ -474,7 +474,7 @@ class ImportMetadata(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
         self.label = "Import Metadata"
-        self.description = "Imports metadata from a spreadsheet"
+        self.description = "Imports metadata from a Google spreadsheet"
         self.canRunInBackground = False
 
     def getParameterInfo(self):
@@ -489,14 +489,28 @@ class ImportMetadata(object):
 
         # Second parameter
         param1 = arcpy.Parameter(
-            displayName="Input Dictionary",
-            name="m_dic",
-            datatype="DETextfile",
+            displayName="Country",
+            name="country",
+            datatype="GPString",
             parameterType="Required",
             direction="Input")
 
+        param1.filter.type = "ValueList"
+        param1.filter.list = ["COG", "COD", "CAF", "CMR", "GAB", "GNQ"]
 
-        params = [param0, param1]
+        # Third parameter
+        param2 = arcpy.Parameter(
+            displayName="Language",
+            name="lang",
+            datatype="GPString",
+            parameterType="Required",
+            direction="Input")
+
+        param2.filter.type = "ValueList"
+        param2.filter.list = ["fr", "en", "es"]
+
+
+        params = [param0, param1, param2]
 
         return params
 
@@ -518,9 +532,10 @@ class ImportMetadata(object):
     def execute(self, parameters, messages):
         """The source code of the tool."""
         in_gdb = parameters[0].valueAsText
-        m_dic = parameters[1].valueAsText
+        country = parameters[1].valueAsText
+        lang = parameters[2].valueAsText
 
-        import_metadata.import_metadata(in_gdb, m_dic, messages)
+        import_metadata.update_metadata(in_gdb, country, lang, messages)
         return
 
 class AddAttachementMetadata(object):
