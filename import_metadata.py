@@ -75,31 +75,11 @@ def open_spreadsheet(country, lang):
     #open the metadata entry spreadsheet
     #wks = gc.open("Metadata Forest Atlas (french/ spanish)").sheet1
     if lang == "en":
-        if country == "COG":
-            wks = gc.open_by_key("1f0ODEaQL2RUV8bv3Y3_Kqwf9eLFL1mZiwLxFWS1SRfY").sheet1
-        elif country == "COD":
-            wks = gc.open_by_key("1f0ODEaQL2RUV8bv3Y3_Kqwf9eLFL1mZiwLxFWS1SRfY").sheet2
-        elif country == "CAF":
-            wks = gc.open_by_key("1f0ODEaQL2RUV8bv3Y3_Kqwf9eLFL1mZiwLxFWS1SRfY").sheet3
-        elif country == "CMR":
-            wks = gc.open_by_key("1f0ODEaQL2RUV8bv3Y3_Kqwf9eLFL1mZiwLxFWS1SRfY").sheet4
-        elif country == "GAB":
-            wks = gc.open_by_key("1f0ODEaQL2RUV8bv3Y3_Kqwf9eLFL1mZiwLxFWS1SRfY").sheet5
-        elif country == "GNQ":
-            wks = gc.open_by_key("1f0ODEaQL2RUV8bv3Y3_Kqwf9eLFL1mZiwLxFWS1SRfY").sheet6
+        sh = gc.open_by_key("1f0ODEaQL2RUV8bv3Y3_Kqwf9eLFL1mZiwLxFWS1SRfY")
     else:
-        if country == "COG":
-            wks = gc.open_by_key("1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM").sheet1
-        elif country == "COD":
-            wks = gc.open_by_key("1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM").sheet2
-        elif country == "CAF":
-            wks = gc.open_by_key("1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM").sheet3
-        elif country == "CMR":
-            wks = gc.open_by_key("1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM").sheet4
-        elif country == "GAB":
-            wks = gc.open_by_key("1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM").sheet5
-        elif country == "GNQ":
-            wks = gc.open_by_key("1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM").sheet6
+        sh = gc.open_by_key("1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM")
+
+    wks = sh.worksheet(country)
 
     gdocAsLists = wks.get_all_values()
 
@@ -146,8 +126,9 @@ def update_metadata(gdb, country, lang, messages):
     gdocAsLists = open_spreadsheet(country, lang)
     md = gdoc_lists_to_layer_dict(gdocAsLists)
     for dataset in md.keys():
-        messages.addMessage("Update metadata for %s" % dataset)
+
         ds = os.path.join(gdb, dataset)
+        messages.addMessage("Update metadata for %s" % ds)
         metadata = arcpy_metadata.MetadataEditor(ds)
 
         metadata.title = md[dataset]["title"]
