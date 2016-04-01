@@ -57,7 +57,7 @@ elements = {
             "place_keywords": {
                 "path": "dataIdInfo/searchKeys[last()]",
                 "tagname": "keyword",
-                "type": "string"},
+                "type": "list"},
 
             "point_of_contact": {
                 "path": "dataIdInfo/idPoC",

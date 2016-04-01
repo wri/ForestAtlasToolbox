@@ -270,7 +270,7 @@ class MetadataEditor(object):
         desc = arcpy.Describe(workspace)
 
         while 1 == 1:
-            if desc.dataType == "Workspace":
+            if desc.dataType == "Workspace" or desc.dataType == "Folder":
                 return workspace
             else:
                 workspace = os.path.dirname(workspace)
