@@ -3,7 +3,7 @@
 import arcpy
 
 
-def add_metadata_fields(gdb):
+def add_metadata_fields(gdb, messages):
 
     subtypes = {"9100100": "Loi",
                 "9100200": "Code",
