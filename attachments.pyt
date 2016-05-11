@@ -29,7 +29,7 @@ class AddAttachments(object):
         param0 = arcpy.Parameter(
             displayName="Input Features",
             name="in_features",
-            datatype="GPFeatureLayer",
+            datatype=["DETable","DEFeatureClass"],
             parameterType="Required",
             direction="Input",
             multiValue=True)
@@ -55,9 +55,9 @@ class AddAttachments(object):
 
     def execute(self, parameters, messages):
         """The source code of the tool."""
-        in_fcs = parameters[0].values
-        messages.addMessage(in_fcs)
-        attachements_metadata.add_metadata_fields(in_fcs, messages)
+        fcs = parameters[0].valueAsText
+        in_fcs = fcs.replace("'","").split(';')
+        attachements_metadata.add_attachements(in_fcs, messages)
         return
 
 
