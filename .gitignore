@@ -43,10 +43,10 @@ Temporary Items
 .apdisk
 
 # XML files
-.xml
+*.xml
 
 # Compiled Python files
-.pyc
+*.pyc
 
 # Pycharm
 .idea
