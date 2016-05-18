@@ -50,6 +50,8 @@ def add_attachements(fcs, messages):
         table = os.path.join(workspace, "{0}__ATTACH".format(fc_name))
         add_metadata_fields(table, messages)
 
+        messages.addMessage("Enable editor tracking")
+        arcpy.EnableEditorTracking_management(table, "created_user", "created_date", "last_edited_user", "last_edited_date", "ADD_FIELDS")
 
 def add_metadata_fields(table, messages):
     messages.addMessage("Add fields")
@@ -120,3 +122,8 @@ def add_missing_metadata_fields(gdb, messages):
                 # Set Default Subtype...
                 messages.addMessage("Set default subtype")
                 arcpy.SetDefaultSubtype_management(table, "9200100")
+
+                messages.addMessage("Enable editor tracking")
+                try:
+                    arcpy.EnableEditorTracking_management(table, "created_user", "created_date", "last_edited_user", "last_edited_date", "ADD_FIELDS")
+                except: pass
