@@ -1,4 +1,4 @@
-# translate_gdb
+# ForestAtlasToolbox
 
 Translate geodatabase domains, dataset aliases, field aliases and subtypes with this python toolbox. 
 
