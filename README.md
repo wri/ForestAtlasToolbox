@@ -5,6 +5,13 @@ Translate geodatabase domains, dataset aliases, field aliases and subtypes with 
 # Requirements
 
 Uses the ArcPy python module, so you must have ArcGIS Installed 
+```shell
+pip install arcrest_package
+pip install arcpy_metadata
+pip install gspread
+pip install --upgrade oauth2client
+pip install PyOpenSSL
+```
 
 # Usage
 
