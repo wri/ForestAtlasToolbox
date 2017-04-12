@@ -72,7 +72,7 @@ class ImportMetadata(object):
         password = arcpy.Parameter(
             displayName="AGOL password",
             name="password",
-            datatype="GPEncryptedString",
+            datatype="GPStringHidden",
             parameterType="Optional",
             direction="Input",
             category="ArcGIS online")

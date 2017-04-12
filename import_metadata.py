@@ -7,61 +7,6 @@ from oauth2client.service_account import ServiceAccountCredentials
 import arcrest
 from arcresthelper import securityhandlerhelper
 
-lkpColName_to_mdName = {
-                        #'Technical title': u'technical_title',
-                        'title': 'title',
-                        'summery': 'summery',
-                        'description': 'description',
-                        'language': 'language',
-                        'tags': 'tags',
-                        'place_keywords': 'place_keywords',
-                        'extent_description': 'extent_description',
-                        'temporal_extent_description': 'temporal_extent_description',
-                        'scale_description': 'scale_description',
-                        'scale_min': 'scale_min',
-                        'scale_max': 'scale_max',
-                        'update_freq_desc': 'update_freq_desc',
-                        'credits': 'credits',
-                        'citation': 'citation',
-                        'license': 'license',
-                        'limitation': 'limitation',
-                        'source': 'source',
-                        'contact_wri_name': 'contact_wri_name',
-                        'contact_wri_org': 'contact_wri_org',
-                        'contact_wri_pos': 'contact_wri_pos',
-                        'contact_wri_role': 'contact_wri_role',
-                        'contact_wri_address': 'contact_wri_address',
-                        'contact_wri_city': 'contact_wri_city',
-                        'contact_wri_state': 'contact_wri_state',
-                        'contact_wri_postalcode': 'contact_wri_postalcode',
-                        'contact_wri_email': 'contact_wri_email',
-                        'contact_wri_country': 'contact_wri_country',
-                        'contact_wri_phone': 'contact_wri_phone',
-                        'contact_tec_name': 'contact_tec_name',
-                        'contact_tec_org': 'contact_tec_org',
-                        'contact_tec_pos': 'contact_tec_pos',
-                        'contact_tec_role': 'contact_tec_role',
-                        'contact_tec_address': 'contact_tec_address',
-                        'contact_tec_city': 'contact_tec_city',
-                        'contact_tec_state': 'contact_tec_state',
-                        'contact_tec_postalcode': 'contact_tec_postalcode',
-                        'contact_tec_email': 'contact_tec_email',
-                        'contact_tec_country': 'contact_tec_country',
-                        'contact_tec_phone': 'contact_tec_phone',
-                        'contact_own_name': 'contact_own_name',
-                        'contact_own_org': 'contact_own_org',
-                        'contact_own_pos': 'contact_own_pos',
-                        'contact_own_role': 'contact_own_role',
-                        'contact_own_address': 'contact_own_address',
-                        'contact_own_city': 'contact_own_city',
-                        'contact_own_state': 'contact_own_state',
-                        'contact_own_postalcode': 'contact_own_postalcode',
-                        'contact_own_email': 'contact_own_email',
-                        'contact_own_country': 'contact_own_country',
-                        'contact_own_phone': 'contact_own_phone',
-                        'arcgis_online_id': 'arcgis_online_id'
-                        }
-
 
 def open_spreadsheet(country, gid):
 
@@ -178,7 +123,7 @@ def update_metadata(gdb, country, gid, agol, username, password, messages):
                 # metadata.scale_resolution = md[dataset]["scale_description"]
                 # metadata.min_scale = md[dataset]["scale_min"]
                 # metadata.max_scale = md[dataset]["scale_max"]
-                metadata.update_frequency = md[dataset]["update_freq_desc"]
+                metadata.update_frequency_description = md[dataset]["update_freq_desc"]
                 metadata.credits = md[dataset]["credits"]
                 metadata.citation = md[dataset]["citation"]
                 metadata.license = md[dataset]["license"]
