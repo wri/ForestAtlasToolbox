@@ -61,7 +61,8 @@ def update_field_alias(in_gdb, alias_table, lang, messages):
                 field_list = arcpy.ListFields(ds_path)
                 for f in field_list:
                     if f.name == field and f.name.lower() not in \
-                            ["shape", "globalid", "shape_area", "shape_length", "shape.starea()", "shape.stlength()"]:
+                            ["shape", "globalid", "rel_globalid", "shape_area", "shape_length", "shape.starea()",
+                             "shape.stlength()", "st_area(shape)", "st_length(shape)"]:
 
                         arcpy.AlterField_management(ds_path, field, new_field_alias=alias)
                         #f.aliasName = alias
