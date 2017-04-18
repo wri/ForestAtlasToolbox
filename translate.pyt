@@ -16,9 +16,10 @@ class Toolbox(object):
                       UpdateFieldAlias,
                       UpdateDatasetAlias,
                       UpdateSubtypeDesc,
-                      WriteDataSetsToTable,
-                      WriteFieldsToTable,
-                      WriteSubtypesToTable]
+                      ExportDomainToTable,
+                      ExportDataSetsToTable,
+                      ExportFieldsToTable,
+                      ExportSubtypesToTable]
 
 
 class UpdateDomain(object):
@@ -83,6 +84,71 @@ class UpdateDomain(object):
         lang = parameters[2].valueAsText
 
         translate.load_domains(in_gdb, domain_gdb, lang, messages)
+        return
+
+
+class ExportDomainToTable(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "Export Domains"
+        self.description = "Export domains to table"
+        self.canRunInBackground = False
+
+    def getParameterInfo(self):
+        """Define parameter definitions"""
+        # First parameter
+        in_gdb = arcpy.Parameter(
+            displayName="Input GDB",
+            name="in_gdbs",
+            datatype="DEWorkspace",
+            parameterType="Required",
+            direction="Input")
+
+        # Second parameter
+        domain_gdb = arcpy.Parameter(
+            displayName="Domain GDB",
+            name="domain_gdb",
+            datatype="DEWorkspace",
+            parameterType="Required",
+            direction="Input")
+
+        # Third parameter
+        lang = arcpy.Parameter(
+            displayName="Language",
+            name="lang",
+            datatype="GPString",
+            parameterType="Required",
+            direction="Input")
+
+        lang.filter.type = "ValueList"
+        lang.filter.list = ["fr", "en", "es"]
+
+        params = [in_gdb, domain_gdb, lang]
+
+        return params
+
+    def isLicensed(self):
+        """Set whether tool is licensed to execute."""
+        return True
+
+    def updateParameters(self, parameters):
+        """Modify the values and properties of parameters before internal
+        validation is performed.  This method is called whenever a parameter
+        has been changed."""
+        return
+
+    def updateMessages(self, parameters):
+        """Modify the messages created by internal validation for each tool
+        parameter.  This method is called after internal validation."""
+        return
+
+    def execute(self, parameters, messages):
+        """The source code of the tool."""
+        in_gdb = parameters[0].valueAsText
+        domain_gdb = parameters[1].valueAsText
+        lang = parameters[2].valueAsText
+
+        translate.export_domains(in_gdb, domain_gdb, lang, messages)
         return
 
 
@@ -281,11 +347,11 @@ class UpdateSubtypeDesc(object):
         return
 
 
-class WriteFieldsToTable(object):
+class ExportFieldsToTable(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "Write Fields to Table"
-        self.description = "Write fields and field aliases to a table"
+        self.label = "Export Fields to Table"
+        self.description = "Export fields and field aliases to a table"
         self.canRunInBackground = False
 
     def getParameterInfo(self):
@@ -343,11 +409,11 @@ class WriteFieldsToTable(object):
         return
 
 
-class WriteDataSetsToTable(object):
+class ExportDataSetsToTable(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "Write Datasets to Table"
-        self.description = "Write dataset aliases to a table"
+        self.label = "Export Datasets to Table"
+        self.description = "Export dataset aliases to a table"
         self.canRunInBackground = False
 
     def getParameterInfo(self):
@@ -405,11 +471,11 @@ class WriteDataSetsToTable(object):
         return
 
 
-class WriteSubtypesToTable(object):
+class ExportSubtypesToTable(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "Write Subtypes to Table"
-        self.description = "Write subtype descriptions to a table"
+        self.label = "Export Subtypes to Table"
+        self.description = "Export subtype descriptions to a table"
         self.canRunInBackground = False
 
     def getParameterInfo(self):

@@ -26,11 +26,11 @@ def load_domains(in_gdb, domain_gdb, lang, messages):
 def update_dataset_alias(in_gdb, alias_table, lang, messages):
     cursor = arcpy.SearchCursor(alias_table)
     dataset_field = "feature_class"
-    alias_field = "alias_%s" % lang
+    alias_field = "alias_{}".format(lang)
 
     for row in cursor:
         dataset = row.getValue(dataset_field)
-        messages.addMessage("Update dataset %s" % dataset)
+        messages.addMessage("Update dataset {}".format(dataset))
         ds_path = os.path.join(in_gdb, dataset)
         if arcpy.Exists(ds_path):
             alias = row.getValue(alias_field)
@@ -38,14 +38,14 @@ def update_dataset_alias(in_gdb, alias_table, lang, messages):
             if alias != '' and alias is not None:
                 arcpy.AlterAliasName(ds_path, alias)
         else:
-            messages.addMessage("Dataset %s does not exist" % dataset)
+            messages.addMessage("Dataset {} does not exist".format(dataset))
 
 
 def update_field_alias(in_gdb, alias_table, lang, messages):
     cursor = arcpy.SearchCursor(alias_table)
     dataset_field = "feature_class"
     field_field = "field"
-    alias_field = "alias_%s" % lang
+    alias_field = "alias_{}".format(lang)
 
     for row in cursor:
         dataset = row.getValue(dataset_field)
@@ -55,7 +55,7 @@ def update_field_alias(in_gdb, alias_table, lang, messages):
         alias = row.getValue(alias_field)
 
         if alias != '' and alias is not None:
-            messages.addMessage("Update %s, %s" % (dataset, field))
+            messages.addMessage("Update {}, {}".format(dataset, field))
             messages.addMessage(alias)
             if arcpy.Exists(ds_path):
                 field_list = arcpy.ListFields(ds_path)
@@ -67,14 +67,14 @@ def update_field_alias(in_gdb, alias_table, lang, messages):
                         arcpy.AlterField_management(ds_path, field, new_field_alias=alias)
                         #f.aliasName = alias
             else:
-                messages.addMessage("Dataset %s does not exist" % dataset)
+                messages.addMessage("Dataset {} does not exist".format(dataset))
 
 
 def update_subtype(in_gdb, subtype_table, lang, messages):
     cursor = arcpy.SearchCursor(subtype_table)
     dataset_field = "feature_class"
     subtype_field = "subtype"
-    desc_field = "desc_%s" % lang
+    desc_field = "desc_{}".format(lang)
     #default_field = "default"
 
     for row in cursor:
@@ -83,7 +83,7 @@ def update_subtype(in_gdb, subtype_table, lang, messages):
         subtype = row.getValue(subtype_field)
         desc = row.getValue(desc_field)
         #default = row.getValue(default_field)
-        messages.addMessage("Update suptype %s" % subtype)
+        messages.addMessage("Update suptype {}".format(subtype))
         if arcpy.Exists(ds_path):
             if desc != '' and desc is not None:
                 #arcpy.SetSubtypeField_management(ds_path, "type_")
@@ -102,7 +102,20 @@ def update_subtype(in_gdb, subtype_table, lang, messages):
                     #messages.addMessage("Update Suptype %s" % subtype)
                 #arcpy.SetDefaultSubtype_management(ds_path, "subtype")
         else:
-            messages.addMessage("Dataset %s does not exist" % dataset)
+            messages.addMessage("Dataset {} does not exist".format(dataset))
+
+
+def export_domains(in_gdb, domain_gdb, lang, messages):
+    domains = arcpy.da.ListDomains(in_gdb)
+    desc = "desc_{}".format(lang)
+    for domain in domains:
+        out_table = os.path.join(domain_gdb, domain.name)
+        messages.addMessage("Export domain {}".format(domain.name))
+        arcpy.DomainToTable_management(in_gdb, domain.name, out_table, "code", desc)
+        for l in ["en", "fr", "es"]:
+            if l != lang:
+                arcpy.AddField_management(out_table, "desc_{}".format(l), "TEXT", field_length=50)
+
 
 def subtypes_to_table(in_gdb, out_gdb, out_table, messages):
 
