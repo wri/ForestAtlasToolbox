@@ -3,9 +3,7 @@ import arcpy_metadata
 import os
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-
-import arcrest
-from arcresthelper import securityhandlerhelper
+from arcgis.gis import GIS
 
 
 def open_spreadsheet(country, gid):
@@ -68,12 +66,10 @@ def gdoc_lists_to_layer_dict(inGdocAsLists):
     return md
 
 
-def update_metadata(gdb, country, gid, agol, username, password, messages):
+def update_metadata(gdb, country, gid, agol, sharinghost, username, password, messages):
 
     if agol:
-        config = {'username': username, 'password': password, 'security_type': 'Portal'}
-        token = securityhandlerhelper.securityhandlerhelper(config)
-        admin = arcrest.manageorg.Administration(securityHandler=token.securityhandler)
+        gis = GIS(sharinghost, username, password)
 
     desc = arcpy.Describe(gdb)
     if desc.workspaceFactoryProgID == "esriDataSourcesGDB.SdeWorkspaceFactory.1":
@@ -85,8 +81,6 @@ def update_metadata(gdb, country, gid, agol, username, password, messages):
         db_prefix = "{}.{}.".format(database, user)
     else:
         db_prefix = ""
-
-
 
     gdocAsLists = open_spreadsheet(country, gid)
     md = gdoc_lists_to_layer_dict(gdocAsLists)
@@ -166,9 +160,9 @@ def update_metadata(gdb, country, gid, agol, username, password, messages):
                 metadata.save()
 
                 if len(md[dataset]["arcgis_online_id"]) and agol:
-                    item = admin.content.getItem(itemId=md[dataset]["arcgis_online_id"])
-                    item.updateMetadata(metadata.metadata_file)
-
+                    item = gis.content.get(md[dataset]["arcgis_online_id"])
+                    item.update(item_properties={"title": md[dataset]["title"]},
+                                metadata=metadata.metadata_file)
                 metadata.finish()
 
             except IOError:

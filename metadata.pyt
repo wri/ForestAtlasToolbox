@@ -61,6 +61,16 @@ class ImportMetadata(object):
             direction="Input",
             category="ArcGIS online")
 
+        sharinghost = arcpy.Parameter(
+            displayName="Sharinghost",
+            name="sharinghost",
+            datatype="GPString",
+            parameterType="Optional",
+            direction="Input",
+            category="ArcGIS online")
+
+        sharinghost.value = "http://www.arcgis.org"
+
         username = arcpy.Parameter(
             displayName="AGOL username",
             name="username",
@@ -107,7 +117,7 @@ class ImportMetadata(object):
 
         gid_es.value = '1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM'
 
-        params = [in_gdb, country, lang, update_agol, username, password, gid_en, gid_es, gid_fr]
+        params = [in_gdb, country, lang, update_agol, sharinghost, username, password, gid_en, gid_es, gid_fr]
 
         return params
 
@@ -122,9 +132,11 @@ class ImportMetadata(object):
         if bool(parameters[3].value):
             parameters[4].enabled = True
             parameters[5].enabled = True
+            parameters[6].enabled = True
         else:
             parameters[4].enabled = False
             parameters[5].enabled = False
+            parameters[6].enabled = False
 
         return
 
@@ -140,22 +152,24 @@ class ImportMetadata(object):
         lang = parameters[2].valueAsText
 
         if lang == 'en':
-            gid = parameters[6].valueAsText
-        elif lang == 'fr':
             gid = parameters[7].valueAsText
-        else:
+        elif lang == 'fr':
             gid = parameters[8].valueAsText
+        else:
+            gid = parameters[9].valueAsText
 
         agol = bool(parameters[3].value)
 
         if agol:
-            username = parameters[4].valueAsText
-            password = parameters[5].valueAsText
+            sharinghost = parameters[4].valueAsText
+            username = parameters[5].valueAsText
+            password = parameters[6].valueAsText
         else:
+            sharinghost = None
             username = None
             password = None
 
-        import_metadata.update_metadata(in_gdb,  country, gid, agol, username, password, messages)
+        import_metadata.update_metadata(in_gdb,  country, gid, agol, sharinghost, username, password, messages)
         return
 
 
