@@ -40,7 +40,7 @@ class ImportMetadata(object):
             direction="Input")
 
         country.filter.type = "ValueList"
-        country.filter.list = ["COG", "COD", "CAF", "CMR", "GAB", "GNQ"]
+        country.filter.list = ["COG", "COD", "CAF", "CMR", "GAB", "GNQ", "ANPN", "LSA", "GEO"]
 
         # Third parameter
         lang = arcpy.Parameter(
