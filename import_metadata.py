@@ -116,7 +116,9 @@ def update_metadata(gdb, country, gid, agol, username, password, messages):
                 metadata.purpose = md[dataset]["summary"]
                 metadata.abstract = md[dataset]["description"]
                 metadata.language = md[dataset]["language"]
-                metadata.tags = md[dataset]["tags"].split(",")
+
+                metadata.tags = md[dataset]["tags"].split(",") + [md[dataset]["language"]]
+
                 metadata.place_keywords = md[dataset]["place_keywords"].split(",")
                 metadata.extent_description = md[dataset]["extent_description"]
                 metadata.temporal_extent_description = md[dataset]["temporal_extent_description"]
