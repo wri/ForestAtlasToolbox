@@ -3,7 +3,7 @@ import arcpy_metadata
 import os
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from arcgis.gis import GIS
+import arcrest
 
 
 def open_spreadsheet(country, gid):
@@ -69,7 +69,10 @@ def gdoc_lists_to_layer_dict(inGdocAsLists):
 def update_metadata(gdb, country, gid, agol, sharinghost, username, password, messages):
 
     if agol:
-        gis = GIS(sharinghost, username, password)
+        sh = arcrest.PortalTokenSecurityHandler(username=username,
+                                                password=password,
+                                                org_url=sharinghost)
+        admin = arcrest.manageorg.Administration(securityHandler=sh)
 
     desc = arcpy.Describe(gdb)
     if desc.workspaceFactoryProgID == "esriDataSourcesGDB.SdeWorkspaceFactory.1":
@@ -160,9 +163,9 @@ def update_metadata(gdb, country, gid, agol, sharinghost, username, password, me
                 metadata.save()
 
                 if len(md[dataset]["arcgis_online_id"]) and agol:
-                    item = gis.content.get(md[dataset]["arcgis_online_id"])
-                    item.update(item_properties={"title": md[dataset]["title"]},
-                                metadata=metadata.metadata_file)
+                    item = admin.content.getItem(itemId=md[dataset]["arcgis_online_id"])
+                    item.updateMetadata(metadata.metadata_file)
+
                 metadata.finish()
 
             except IOError:
