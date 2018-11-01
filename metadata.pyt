@@ -23,13 +23,6 @@ class ImportMetadata(object):
 
     def getParameterInfo(self):
         """Define parameter definitions"""
-        # First parameter
-        in_gdb = arcpy.Parameter(
-            displayName="Input GDB",
-            name="in_gdbs",
-            datatype="DEWorkspace",
-            parameterType="Required",
-            direction="Input")
 
         # Second parameter
         country = arcpy.Parameter(
@@ -52,6 +45,24 @@ class ImportMetadata(object):
 
         lang.filter.type = "ValueList"
         lang.filter.list = ["fr", "en", "es"]
+
+        # First parameter
+
+        update_gdb = arcpy.Parameter(
+            displayName="Update GDB metadata",
+            name="update_gdb",
+            datatype="GPBoolean",
+            parameterType="Optional",
+            direction="Input",
+            category="Geodatabase")
+
+        in_gdb = arcpy.Parameter(
+            displayName="Input GDB",
+            name="in_gdbs",
+            datatype="DEWorkspace",
+            parameterType="Required",
+            direction="Input",
+            category="Geodatabase")
 
         update_agol = arcpy.Parameter(
             displayName="Update AGOL metadata",
@@ -117,7 +128,7 @@ class ImportMetadata(object):
 
         gid_es.value = '1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM'
 
-        params = [in_gdb, country, lang, update_agol, sharinghost, username, password, gid_en, gid_es, gid_fr]
+        params = [in_gdb, country, lang, update_agol, sharinghost, username, password, gid_en, gid_es, gid_fr, update_gdb]
 
         return params
 
@@ -138,6 +149,11 @@ class ImportMetadata(object):
             parameters[5].enabled = False
             parameters[6].enabled = False
 
+        if bool(parameters[10].value):
+            parameters[0].enabled = True
+        else:
+            parameters[0].enabled = False
+
         return
 
     def updateMessages(self, parameters):
@@ -147,7 +163,7 @@ class ImportMetadata(object):
 
     def execute(self, parameters, messages):
         """The source code of the tool."""
-        in_gdb = parameters[0].valueAsText
+
         country = parameters[1].valueAsText
         lang = parameters[2].valueAsText
 
@@ -158,8 +174,13 @@ class ImportMetadata(object):
         else:
             gid = parameters[9].valueAsText
 
-        agol = bool(parameters[3].value)
+        gdb = bool(parameters[10].value)
+        if gdb:
+            in_gdb = parameters[0].valueAsText
+        else:
+            in_gdb = None
 
+        agol = bool(parameters[3].value)
         if agol:
             sharinghost = parameters[4].valueAsText
             username = parameters[5].valueAsText
@@ -169,7 +190,7 @@ class ImportMetadata(object):
             username = None
             password = None
 
-        import_metadata.update_metadata(in_gdb,  country, gid, agol, sharinghost, username, password, messages)
+        import_metadata.update_metadata(in_gdb, gdb, country, gid, agol, sharinghost, username, password, messages)
         return
 
 
