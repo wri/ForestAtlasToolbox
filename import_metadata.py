@@ -113,8 +113,9 @@ def update_metadata(in_gdb, gdb, country, gid, agol, sharinghost, username, pass
 
             except IOError:
                 messages.addMessage("Cannot find %s, write to temp file" % ds)
-                f = open(tmp_file, "w+")
-                f.close()
+                with open(tmp_file, "w+") as f:
+                    f.write('<?xml version="1.0" encoding="UTF-8"?><metadata xml:lang="en"></metadata>')
+
                 metadata = arcpy_metadata.MetadataEditor(metadata_file=tmp_file)
 
             metadata.title = md[dataset]["title"]
