@@ -104,6 +104,8 @@ def update_metadata(in_gdb, gdb, country, gid, agol, sharinghost, username, pass
             ds = os.path.join(in_gdb, dataset)
 
         if len(dataset) > 0:
+            tmp_file = "temp_{}.xml".format(dataset)
+
             try:
 
                 metadata = arcpy_metadata.MetadataEditor(ds)
@@ -111,8 +113,9 @@ def update_metadata(in_gdb, gdb, country, gid, agol, sharinghost, username, pass
 
             except IOError:
                 messages.addMessage("Cannot find %s, write to temp file" % ds)
-                ntf = NamedTemporaryFile()
-                metadata = arcpy_metadata.MetadataEditor(metadata_file=ntf.name)
+                f = open(tmp_file, "w+")
+                f.close()
+                metadata = arcpy_metadata.MetadataEditor(metadata_file=tmp_file)
 
             metadata.title = md[dataset]["title"]
             metadata.purpose = md[dataset]["summary"]
@@ -172,6 +175,9 @@ def update_metadata(in_gdb, gdb, country, gid, agol, sharinghost, username, pass
                 item.updateMetadata(metadata.metadata_file)
 
             metadata.finish()
+
+            if os.path.exists(tmp_file):
+                os.remove(tmp_file)
 
 
 
