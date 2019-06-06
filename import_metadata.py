@@ -104,7 +104,7 @@ def update_metadata(in_gdb, gdb, country, gid, agol, sharinghost, username, pass
             ds = os.path.join(in_gdb, dataset)
 
         if len(dataset) > 0:
-            tmp_file = "temp_{}.xml".format(dataset)
+            tmp_file = "temp_{}.xml".format(os.path.basename(dataset))
 
             try:
 
