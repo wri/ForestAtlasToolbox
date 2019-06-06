@@ -56,7 +56,7 @@ class UpdateDomain(object):
             direction="Input")
 
         param2.filter.type = "ValueList"
-        param2.filter.list = ["fr", "en", "es"]
+        param2.filter.list = ["fr", "en", "es", "ka"]
 
         params = [param0, param1, param2]
 
@@ -121,7 +121,7 @@ class ExportDomainToTable(object):
             direction="Input")
 
         lang.filter.type = "ValueList"
-        lang.filter.list = ["fr", "en", "es"]
+        lang.filter.list = ["fr", "en", "es", "ka"]
 
         params = [in_gdb, domain_gdb, lang]
 
@@ -186,7 +186,7 @@ class UpdateFieldAlias(object):
             direction="Input")
 
         param2.filter.type = "ValueList"
-        param2.filter.list = ["fr", "en", "es"]
+        param2.filter.list = ["fr", "en", "es", "ka"]
 
         params = [param0, param1, param2]
 
@@ -251,7 +251,7 @@ class UpdateDatasetAlias(object):
             direction="Input")
 
         param2.filter.type = "ValueList"
-        param2.filter.list = ["fr", "en", "es"]
+        param2.filter.list = ["fr", "en", "es", "ka"]
 
         params = [param0, param1, param2]
 
@@ -316,7 +316,7 @@ class UpdateSubtypeDesc(object):
             direction="Input")
 
         param2.filter.type = "ValueList"
-        param2.filter.list = ["fr", "en", "es"]
+        param2.filter.list = ["fr", "en", "es", "ka"]
 
         params = [param0, param1, param2]
 

@@ -33,7 +33,7 @@ class ImportMetadata(object):
             direction="Input")
 
         country.filter.type = "ValueList"
-        country.filter.list = ["COG", "COD", "CAF", "CMR", "GAB", "GNQ", "ANPN", "LSA", "GEO"]
+        country.filter.list = ["COG", "COD", "CAF", "CMR", "GAB", "GNQ", "ANPN", "LSA", "GEO_STATIC", "GEO_UPDATE"]
 
         # Third parameter
         lang = arcpy.Parameter(
@@ -44,7 +44,7 @@ class ImportMetadata(object):
             direction="Input")
 
         lang.filter.type = "ValueList"
-        lang.filter.list = ["fr", "en", "es"]
+        lang.filter.list = ["fr", "en", "es", "ka"]
 
         # First parameter
 
@@ -126,9 +126,17 @@ class ImportMetadata(object):
             direction="Input",
             category="Metadata source (Google spreadsheet id)")
 
+        gid_ka = arcpy.Parameter(
+            displayName="Georgian",
+            name="gid_ka",
+            datatype="GPString",
+            parameterType="Required",
+            direction="Input",
+            category="Metadata source (Google spreadsheet id)")
+
         gid_es.value = '1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM'
 
-        params = [in_gdb, country, lang, update_agol, sharinghost, username, password, gid_en, gid_es, gid_fr, update_gdb]
+        params = [in_gdb, country, lang, update_agol, sharinghost, username, password, gid_en, gid_es, gid_fr, gid_ka, update_gdb]
 
         return params
 
@@ -149,7 +157,7 @@ class ImportMetadata(object):
             parameters[5].enabled = False
             parameters[6].enabled = False
 
-        if bool(parameters[10].value):
+        if bool(parameters[11].value):
             parameters[0].enabled = True
         else:
             parameters[0].enabled = False
@@ -171,10 +179,12 @@ class ImportMetadata(object):
             gid = parameters[7].valueAsText
         elif lang == 'fr':
             gid = parameters[8].valueAsText
-        else:
+        elif lang == 'es':
             gid = parameters[9].valueAsText
+        else:
+            gid = parameters[10].valueAsText
 
-        gdb = bool(parameters[10].value)
+        gdb = bool(parameters[11].value)
         if gdb:
             in_gdb = parameters[0].valueAsText
         else:
