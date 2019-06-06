@@ -66,7 +66,7 @@ def gdoc_lists_to_layer_dict(inGdocAsLists):
     return md
 
 
-def update_metadata(gdb, country, gid, agol, sharinghost, username, password, messages):
+def update_metadata(in_gdb, gdb, country, gid, agol, sharinghost, username, password, messages):
 
     if agol:
         sh = arcrest.PortalTokenSecurityHandler(username=username,
@@ -74,7 +74,7 @@ def update_metadata(gdb, country, gid, agol, sharinghost, username, password, me
                                                 org_url=sharinghost)
         admin = arcrest.manageorg.Administration(securityHandler=sh)
 
-    desc = arcpy.Describe(gdb)
+    desc = arcpy.Describe(in_gdb)
     if desc.workspaceFactoryProgID == "esriDataSourcesGDB.SdeWorkspaceFactory.1":
         database = desc.connectionProperties.database
         try:
@@ -92,16 +92,16 @@ def update_metadata(gdb, country, gid, agol, sharinghost, username, password, me
         d = dataset.split('\\')
         if len(d) == 1:
             if db_prefix != "":
-                ds = os.path.join(gdb, "{}{}".format(db_prefix, d[0]))
+                ds = os.path.join(in_gdb, "{}{}".format(db_prefix, d[0]))
             else:
-                ds = os.path.join(gdb, d[0])
+                ds = os.path.join(in_gdb, d[0])
         elif len(d) == 2:
             if db_prefix != "":
-                ds = os.path.join(gdb, "{}{}".format(db_prefix, d[0]), "{}{}".format(db_prefix, d[1]))
+                ds = os.path.join(in_gdb, "{}{}".format(db_prefix, d[0]), "{}{}".format(db_prefix, d[1]))
             else:
-                ds = os.path.join(gdb, d[0], d[1])
+                ds = os.path.join(in_gdb, d[0], d[1])
         else:
-            ds = os.path.join(gdb, dataset)
+            ds = os.path.join(in_gdb, dataset)
 
         if len(dataset) > 0:
             try:

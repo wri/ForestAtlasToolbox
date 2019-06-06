@@ -80,7 +80,7 @@ class ImportMetadata(object):
             direction="Input",
             category="ArcGIS online")
 
-        sharinghost.value = "http://www.arcgis.org"
+        sharinghost.value = "http://www.arcgis.com"
 
         username = arcpy.Parameter(
             displayName="AGOL username",
@@ -126,6 +126,8 @@ class ImportMetadata(object):
             direction="Input",
             category="Metadata source (Google spreadsheet id)")
 
+        gid_es.value = '1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM'
+
         gid_ka = arcpy.Parameter(
             displayName="Georgian",
             name="gid_ka",
@@ -134,7 +136,7 @@ class ImportMetadata(object):
             direction="Input",
             category="Metadata source (Google spreadsheet id)")
 
-        gid_es.value = '1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM'
+        gid_ka.value = '1JoxJKA0oSID4gIOGKKSbqUjBTYA9SAFEN0yz-FUFrhM'
 
         params = [in_gdb, country, lang, update_agol, sharinghost, username, password, gid_en, gid_es, gid_fr, gid_ka, update_gdb]
 
