@@ -134,8 +134,8 @@ def update_metadata(in_gdb, gdb, country, gid, agol, sharinghost, username, pass
             metadata.update_frequency_description = md[dataset]["update_freq_desc"]
             metadata.credits = md[dataset]["credits"]
             metadata.citation = md[dataset]["citation"]
-            metadata.license = md[dataset]["license"]
-            metadata.limitation = md[dataset]["limitation"]
+            metadata.limitation = md[dataset]["license"]
+            metadata.license = md[dataset]["limitation"]
             metadata.source = md[dataset]["source"]
             metadata.point_of_contact.contact_name = md[dataset]["contact_wri_name"]
             metadata.point_of_contact.organization = md[dataset]["contact_wri_org"]
@@ -172,7 +172,9 @@ def update_metadata(in_gdb, gdb, country, gid, agol, sharinghost, username, pass
             metadata.save()
 
             if len(md[dataset]["arcgis_online_id"]) and agol:
-                item = admin.content.getItem(itemId=md[dataset]["arcgis_online_id"])
+                item_id = md[dataset]["arcgis_online_id"]
+                messages.addMessage("Update ArcGIS online item %s" % item_id)
+                item = admin.content.getItem(itemId=item_id)
                 item.updateMetadata(metadata.metadata_file)
 
             metadata.finish()
